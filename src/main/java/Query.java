@@ -7,6 +7,8 @@ import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -20,8 +22,15 @@ public class Query {
     private static final int HASH_STRENGTH = 65536;
     private static final int KEY_LENGTH = 128;
 
-    private static final String GET_ALL = "SELECT * FROM Boulders";
-    private PreparedStatement getAllStatement;
+    private static final String GET_DESTINATIONS = "SELECT DISTINCT destination FROM Problems";
+    private PreparedStatement getDestinationsStatement;
+
+    private static final String GET_NAMES = "SELECT name FROM Problems";
+    private PreparedStatement getNamesStatement;
+
+    private static final String GET_PROBLEMS = "SELECT destination, area, subarea, boulder, name, grade, stars, description " +
+            "FROM Problems WHERE destination = ? ORDER BY name";
+    private PreparedStatement getProblemsStatement;
 
     // For check dangling
     private static final String TRANCOUNT_SQL = "SELECT @@TRANCOUNT AS tran_count";
@@ -97,10 +106,67 @@ public class Query {
     }
 
     /**
+     * Gathers names of all boulders from database
+     * @return A list of all boulder names
+     */
+    public List<String> getNames() throws SQLException {
+        List<String> boulders = new ArrayList<>();
+        ResultSet boulderResults = getNamesStatement.executeQuery();
+        while (boulderResults.next()) {
+            boulders.add(boulderResults.getString("name"));
+        }
+        boulderResults.close();
+        return boulders;
+    }
+
+    /**
+     * Gathers names of all unique climbing destinations
+     * @return A list of all destination names
+     */
+    public List<String> getDestinations() throws SQLException {
+        List<String> destinations = new ArrayList<>();
+        ResultSet destResults = getDestinationsStatement.executeQuery();
+        while (destResults.next()) {
+            destinations.add(destResults.getString("destination"));
+        }
+        destResults.close();
+        return destinations;
+    }
+
+    /**
+     * Gathers all relevant boulder problem information
+     * @param dest The destination to fetch problems from
+     * @return A list of all boulder problems of type BoulderProblem
+     */
+    public List<BoulderProblem> getProblems(String dest) throws SQLException {
+        List<BoulderProblem> problems = new ArrayList<>();
+        getProblemsStatement.clearParameters();
+        getProblemsStatement.setString(1, dest);
+        ResultSet probResults = getProblemsStatement.executeQuery();
+        while (probResults.next()) {
+            String destination = probResults.getString("destination");
+            String area = probResults.getString("area");
+            String subarea = probResults.getString("subarea");
+            String boulder = probResults.getString("boulder");
+            String name = probResults.getString("name");
+            String grade = probResults.getString("grade");
+            int stars = probResults.getInt("stars");
+            String description = probResults.getString("description");
+
+            BoulderProblem problem = new BoulderProblem(destination, area, subarea, boulder, name, grade, stars, description);
+            problems.add(problem);
+        }
+        probResults.close();
+        return problems;
+    }
+
+    /**
      * prepare all the SQL statements in this method.
      */
     private void prepareStatements() throws SQLException {
-        getAllStatement = conn.prepareStatement(GET_ALL);
+        getDestinationsStatement = conn.prepareStatement(GET_DESTINATIONS);
+        getNamesStatement = conn.prepareStatement(GET_NAMES);
+        getProblemsStatement = conn.prepareStatement(GET_PROBLEMS);
         tranCountStatement = conn.prepareStatement(TRANCOUNT_SQL);
     }
 
@@ -158,9 +224,10 @@ public class Query {
         return ex.getErrorCode() == 1205;
     }
 
-    public static void main(String[] args) throws IOException, SQLException {
-        /* prepare the database connection stuff */
-        Query q = new Query();
-        q.closeConnection();
-    }
+//    public static void main(String[] args) throws IOException, SQLException {
+//        /* prepare the database connection stuff */
+//        Query q = new Query();
+//        System.out.println("made the connection");
+//        q.closeConnection();
+//    }
 }

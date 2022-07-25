@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 
 interface DropdownProps {
-    buildings: {[shortName: string]: string},
+    elements: string[],
     type: string,
     key: string
-    onSelect(selection: string): void,
+    onSelect(selection: any): void,
 }
 
 /**
@@ -14,13 +14,13 @@ class Dropdown extends Component<DropdownProps> {
 
     render() {
         let key: number;
-        this.props.type === "start" ? key = 1 : key = 2;
-        let buildingOption: JSX.Element[] = [];
-        key === 1 ? buildingOption.push(<option value="start" key={key.toString()}>Start</option>) : buildingOption.push(<option value="end" key={key.toString()}>End</option>)
-        for (let shortName in this.props.buildings) {
-            let longName = this.props.buildings[shortName];
+        this.props.type === "destination" ? key = 1 : key = 2;
+        let option: JSX.Element[] = [];
+        key === 1 ? option.push(<option value="destination" key={key.toString()}>destination</option>) : option.push(<option value="problem" key={key.toString()}>problem</option>)
+        for (let index in this.props.elements) {
+            let name = this.props.elements[index];
             key += 2;
-            buildingOption.push(<option value={shortName} key={key.toString()}>{longName} : {shortName}</option>);
+            option.push(<option value={name} key={key.toString()}>{name}</option>);
         }
 
         return (
@@ -29,7 +29,7 @@ class Dropdown extends Component<DropdownProps> {
                     name={this.props.type}
                     id={this.props.type}
                     onChange={(event) => this.props.onSelect(event.target.value)}>
-                    {buildingOption}
+                    {option}
                 </select>
             </div>
         );
