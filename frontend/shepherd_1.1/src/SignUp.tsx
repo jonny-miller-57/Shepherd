@@ -30,21 +30,6 @@ const genders: string[] = [
     "Other", "Non-Binary", "Female", "Male",
 ]
 
-interface IFormInput {
-    username: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    password: string;
-    confirmPassword: string;
-    flashGrade: number;
-    projectGrade: number;
-    heightFeet: number;
-    heightInches: number;
-    apeIndex: number;
-    gender: string;
-}
-
 const validationSchema = yup.object().shape({
     username: yup
         .string()
@@ -118,6 +103,21 @@ for (let i = 0; i < 12; i++) {
     inchesSelections.push(
         <MenuItem key={i} value={i}>{i}</MenuItem>
     )
+}
+
+interface IFormInput {
+    username: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+    flashGrade: number;
+    projectGrade: number;
+    heightFeet: number;
+    heightInches: number;
+    apeIndex: number;
+    gender: string;
 }
 
 export default function SignUp() {

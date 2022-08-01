@@ -41,7 +41,7 @@ const validationSchema = yup.object().shape({
         .max(20, "Password must be between 6-20 characters"),
 })
 
-export default function SignInSide() {
+export default function SignIn() {
     const {
         handleSubmit,
         control,
