@@ -1,0 +1,26 @@
+﻿destination,area,subarea,num_problems,approach_terrain,approach_time,sun,parking_lat,parking_long,rain_covered,dries_quick
+Squamish,Grand Wall,Campground Boulders,39,flat,1,pm_filtered,49.67908,-123.15462,0,0
+Squamish,Grand Wall,Titanic South,51,uphill,1,pm_filtered,49.68064,-123.15324,0,0
+Squamish,Grand Wall,Titanic North,71,uphill,5,pm_filtered,49.68064,-123.15324,0,0
+Squamish,Grand Wall,Thighmaster,69,uphill,1,pm_filtered,49.68064,-123.15324,0,0
+Squamish,Grand Wall,Survivor,51,uphill,10,pm_filtered,49.68064,-123.15324,0,0
+Squamish,Grand Wall,Viper,69,flat,5,pm_filtered,49.68187,-123.15331,0,0
+Squamish,Grand Wall,Black Dyke,92,flat,5,pm_filtered,49.68187,-123.15331,0,0
+Squamish,Grand Wall,The Octagon,46,flat,5,pm_filtered,49.68187,-123.15331,0,0
+Squamish,Grand Wall,Superfly,45,flat,5,pm_filtered,49.68187,-123.15331,0,0
+Squamish,Grand Wall,Lip-smack,81,uphill,8,pm_filtered,49.68187,-123.15331,0,0
+Squamish,Grand Wall,Mantel Madness,119,uphill,8,pm_filtered,49.68187,-123.15331,0,0
+Squamish,Grand Wall,Undertow,59,uphill,12,pm_filtered,49.68187,-123.15331,0,0
+Squamish,Grand Wall,Easy Chair,94,flat,5,pm_filtered,49.68187,-123.15331,0,0
+Squamish,Grand Wall,Animal Magnetism,85,uphill,5,pm_filtered,49.68187,-123.15331,0,0
+Squamish,Grand Wall,Heartbreak Hotel,55,uphill,10,pm_filtered,49.68187,-123.15331,0,0
+Squamish,Grand Wall,Gilligan's Island,22,uphill,12,pm_filtered,49.68187,-123.15331,0,0
+Squamish,Grand Wall,Ride the Lightning,55,uphill,15,pm_filtered,49.68187,-123.15331,0,0
+Squamish,Grand Wall,Wendy World,25,uphill,17,pm_filtered,49.68187,-123.15331,0,0
+Squamish,Grand Wall,Spirit World,23,uphill,20,pm_filtered,49.68187,-123.15331,0,0
+Squamish,Apron Boulders,The Jungle,74,flat,5,pm,49.6819,-123.1533,0,1
+Squamish,Apron Boulders,The Snake Pit,27,flat,8,pm,49.6819,-123.1533,0,1
+Squamish,Apron Boulders,Gibbs' Cave,86,flat,10,pm,49.6819,-123.1533,1,1
+Squamish,Apron Boulders,Descent Trail,66,flat,12,pm,49.6819,-123.1533,0,1
+Squamish,Apron Boulders,Drive By,31,flat,5,pm,49.6883,-123.1472,0,1
+Squamish,Apron Boulders,Parking Lot,21,uphill,5,pm_filtered,49.6883,-123.1472,0,0
