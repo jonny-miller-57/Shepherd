@@ -25,3 +25,18 @@ CREATE TABLE Lists(
     The_Impossible_7 VARCHAR(1),
     Squamish_7_Terrors VARCHAR(1),
 )
+
+CREATE TABLE Users(
+    username VARCHAR(20) PRIMARY KEY,
+    firstName VARCHAR(255),
+    lastName VARCHAR(255),
+    email VARCHAR(255),
+    saltedPass VARBINARY(20),
+    hashedPass VARBINARY(20),
+    flashGrade VARCHAR(2),
+    projectGrade VARCHAR(2),
+    heightFeet INT,
+    heightInches INT,
+    apeIndex INT,
+    gender VARCHAR(255)
+)
