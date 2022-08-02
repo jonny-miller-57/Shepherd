@@ -118,22 +118,43 @@ export default function SignUp() {
     } = useForm<Profile>({
         resolver: yupResolver(validationSchema),
         defaultValues: {
-            username: "",
-            firstName: "",
-            lastName: "",
-            email: "",
-            password: "",
-            confirmPassword: "",
+            username: "test",
+            firstName: "test",
+            lastName: "test",
+            email: "test@test.com",
+            password: "tester",
+            confirmPassword: "tester",
             flashGrade: 0,
             projectGrade: 1,
             heightFeet: 5,
             heightInches: 0,
             apeIndex: 0,
-            gender: "",
+            gender: "Male",
         }
     });
 
-    const onSubmit: SubmitHandler<Profile> = data => console.log(data);
+    const onSubmit: SubmitHandler<Profile> = async (data) => {
+
+        const requestOptions = {
+            method: "POST",
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data),
+        };
+
+        const response = await fetch(
+            "http://localhost:4567/new-user",
+            requestOptions
+        );
+        if (!response.ok) {
+            console.log("Response: " + response);
+            alert("Error! Expected: 200, Was: " + response.status);
+            return;
+        }
+        let result = response.json();
+        console.log("Result: " + result);
+    };
 
     return (
         <ThemeProvider theme={theme}>
@@ -152,7 +173,7 @@ export default function SignUp() {
                         Sign up
                     </Typography>
                     <Box sx={{ mt: 3 }}>
-                        <form onSubmit={handleSubmit(onSubmit)}>
+                        <form id={"signup-form"} onSubmit={handleSubmit(onSubmit)}>
                             <Grid container spacing={2}>
                                 <Grid item xs={12} sm={6}>
                                     <Controller

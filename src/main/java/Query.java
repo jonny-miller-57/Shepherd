@@ -9,6 +9,7 @@ import java.security.spec.KeySpec;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 
 /**
@@ -31,6 +32,10 @@ public class Query {
     private static final String GET_PROBLEMS = "SELECT destination, area, subarea, boulder, name, grade, stars, description " +
             "FROM Problems WHERE destination = ? ORDER BY name";
     private PreparedStatement getProblemsStatement;
+
+    // For creating new user
+    private static final String NEW_USER = "INSERT INTO Users VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    private PreparedStatement newUserStatement;
 
     // For check dangling
     private static final String TRANCOUNT_SQL = "SELECT @@TRANCOUNT AS tran_count";
@@ -160,6 +165,33 @@ public class Query {
         return problems;
     }
 
+    public void transaction_creatUser(String username, String first, String last, String email,
+        String password, String flash, String proj, int feet, int inches, int ape, String gender) throws SQLException {
+        try {
+            byte[] salt = getSalt();
+            byte[] hash = getHash(password, salt);
+
+            // set up prepared statements to query db
+            newUserStatement.clearParameters();
+            newUserStatement.setString(1, username);
+            newUserStatement.setString(2, first);
+            newUserStatement.setString(3, last);
+            newUserStatement.setString(4, email);
+            newUserStatement.setBytes(5, salt);
+            newUserStatement.setBytes(6, hash);
+            newUserStatement.setString(7, flash);
+            newUserStatement.setString(8, proj);
+            newUserStatement.setInt(9, feet);
+            newUserStatement.setInt(10, inches);
+            newUserStatement.setInt(11, ape);
+            newUserStatement.setString(12, gender);
+            newUserStatement.execute();
+
+        } finally {
+            checkDanglingTransaction();
+        }
+    }
+
     /**
      * prepare all the SQL statements in this method.
      */
@@ -167,6 +199,7 @@ public class Query {
         getDestinationsStatement = conn.prepareStatement(GET_DESTINATIONS);
         getNamesStatement = conn.prepareStatement(GET_NAMES);
         getProblemsStatement = conn.prepareStatement(GET_PROBLEMS);
+        newUserStatement = conn.prepareStatement(NEW_USER);
         tranCountStatement = conn.prepareStatement(TRANCOUNT_SQL);
     }
 
