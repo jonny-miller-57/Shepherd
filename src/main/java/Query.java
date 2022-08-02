@@ -16,7 +16,7 @@ import java.util.Properties;
  */
 public class Query {
 
-    private Connection conn;
+    private final Connection conn;
 
     // Password hashing parameter constants
     private static final int HASH_STRENGTH = 65536;
