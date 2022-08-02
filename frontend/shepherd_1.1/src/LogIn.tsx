@@ -13,6 +13,8 @@ import { cyan, indigo } from "@mui/material/colors";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { LoginContext } from "./App";
+import {useContext} from "react";
 
 const theme = createTheme({
     palette: {
@@ -41,7 +43,9 @@ const validationSchema = yup.object().shape({
         .max(20, "Password must be between 6-20 characters"),
 })
 
-export default function SignIn() {
+export default function LogIn() {
+    const { loggedIn, setLoggedIn } = useContext(LoginContext);
+
     const {
         handleSubmit,
         control,
@@ -54,7 +58,10 @@ export default function SignIn() {
         }
     });
 
-    const onSubmit: SubmitHandler<IFormInput> = data => console.log(data);
+    const onSubmit: SubmitHandler<IFormInput> = data => {
+        console.log(data);
+        console.log(loggedIn);
+    }
 
     return (
         <ThemeProvider theme={theme}>
@@ -130,6 +137,7 @@ export default function SignIn() {
                                     variant="contained"
                                     color={"primary"}
                                     sx={{ mt: 3, mb: 2 }}
+                                    onClick={() => setLoggedIn(!loggedIn)}
                                 >
                                     Log In
                                 </Button>
@@ -137,7 +145,7 @@ export default function SignIn() {
                                     Don't have an account?
                                 </Grid>
                                 <Button
-                                    type="submit"
+                                    type="button"
                                     fullWidth
                                     variant="contained"
                                     color={"secondary"}

@@ -1,33 +1,23 @@
-import React, { Component } from 'react';
+import React, { useState, createContext, useContext } from 'react';
 import { Box } from '@mui/material/'
-import SignUp from "./SignUp";
-import SignIn from "./SignIn"
+import LogIn from "./LogIn"
 import './App.css';
+import SignUp from "./SignUp";
 
-interface AppState{
-    loggedIn: boolean
-}
+export const LoginContext = createContext({
+    loggedIn: false,
+    setLoggedIn: (loggedIn: boolean) => {}
+});
 
-class App extends Component<{}, AppState> {
-    constructor(props: {}) {
-        super(props);
-        this.state = {loggedIn: false};
-    }
-    render() {
-        if (!this.state.loggedIn) {
-            return (
-                <Box>
-                    <SignIn/>
-                </Box>
-            )
-        } else {
-            return (
-                <Box>
-                    <SignUp/>
-                </Box>
-            )
-        }
-    }
+function App() {
+    const [loggedIn, setLoggedIn] = useState<boolean>(false);
+    console.log(loggedIn);
+    return (
+        <div>
+            <h1>{"User is logged in: " + loggedIn}</h1>
+            <LogIn/>
+        </div>
+    );
 }
 
 export default App;
