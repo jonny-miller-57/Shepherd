@@ -13,8 +13,9 @@ import { cyan, indigo } from "@mui/material/colors";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { LoginContext } from "./App";
 import {useContext} from "react";
+import {LoginContext} from "./LoginContext";
+import {Link} from "@mui/material";
 
 const theme = createTheme({
     palette: {
@@ -43,8 +44,8 @@ const validationSchema = yup.object().shape({
         .max(20, "Password must be between 6-20 characters"),
 })
 
-export default function LogIn() {
-    const { loggedIn, setLoggedIn } = useContext(LoginContext);
+export default function Login() {
+    const { switchToSignup } = useContext(LoginContext);
 
     const {
         handleSubmit,
@@ -60,7 +61,6 @@ export default function LogIn() {
 
     const onSubmit: SubmitHandler<IFormInput> = data => {
         console.log(data);
-        console.log(loggedIn);
     }
 
     return (
@@ -137,24 +137,20 @@ export default function LogIn() {
                                     variant="contained"
                                     color={"primary"}
                                     sx={{ mt: 3, mb: 2 }}
-                                    onClick={() => setLoggedIn(!loggedIn)}
                                 >
                                     Log In
                                 </Button>
-                                <Grid>
-                                    Don't have an account?
-                                </Grid>
-                                <Button
-                                    type="button"
-                                    fullWidth
-                                    variant="contained"
-                                    color={"secondary"}
-                                    sx={{ mt: 3, mb: 2 }}
-                                >
-                                    Sign Up
-                                </Button>
                             </form>
                         </Box>
+                        <Grid item>
+                            <Link
+                                href="#"
+                                variant="body2"
+                                onClick={switchToSignup}
+                            >
+                                {"Don't have an account? Sign Up"}
+                            </Link>
+                        </Grid>
                     </Box>
                 </Grid>
             </Grid>

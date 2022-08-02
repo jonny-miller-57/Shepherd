@@ -1,13 +1,3 @@
-import React, {createContext, useContext} from 'react';
+import React, {createContext} from 'react';
 
-export type GlobalContent = {
-    loggedIn: boolean,
-    setLoggedIn: (b: boolean) => void,
-}
-
-export const LoginContext = createContext<GlobalContent> ({
-    loggedIn: false,
-    setLoggedIn: () => {},
-})
-
-export const useLoginContext = () => useContext(LoginContext);
+export const LoginContext = createContext<any> ("login");

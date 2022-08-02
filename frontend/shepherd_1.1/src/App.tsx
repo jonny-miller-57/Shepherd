@@ -1,22 +1,33 @@
-import React, { useState, createContext, useContext } from 'react';
-import { Box } from '@mui/material/'
-import LogIn from "./LogIn"
+import React, { useState } from 'react';
+import Login from "./Login"
 import './App.css';
+import {Profile} from "./Profile";
+import {LoginContext} from "./LoginContext";
 import SignUp from "./SignUp";
 
-export const LoginContext = createContext({
-    loggedIn: false,
-    setLoggedIn: (loggedIn: boolean) => {}
-});
-
 function App() {
-    const [loggedIn, setLoggedIn] = useState<boolean>(false);
-    console.log(loggedIn);
+    const [active, setActive] = useState<string>("login");
+    const [user, setUser] = useState<Profile | null>(null);
+
+    const switchToSignup = () => {
+        setActive("signup");
+    }
+
+    const switchToLogin = () => {
+        setActive("login");
+    }
+
+    const switchToHome = () => {
+        setActive("loggedin")
+    }
+
+    const contextValue = { switchToLogin, switchToSignup, switchToHome };
+
     return (
-        <div>
-            <h1>{"User is logged in: " + loggedIn}</h1>
-            <LogIn/>
-        </div>
+        <LoginContext.Provider value={contextValue}>
+            {active === "login" && <Login />}
+            {active === "signup" && <SignUp />}
+        </LoginContext.Provider>
     );
 }
 

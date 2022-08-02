@@ -14,6 +14,9 @@ import * as yup from "yup";
 import { yupResolver } from '@hookform/resolvers/yup';
 import { MenuItem} from "@mui/material";
 import {cyan, indigo} from "@mui/material/colors";
+import {Profile} from "./Profile";
+import {useContext} from "react";
+import {LoginContext} from "./LoginContext";
 
 const theme = createTheme({
     palette: {
@@ -105,27 +108,14 @@ for (let i = 0; i < 12; i++) {
     )
 }
 
-interface IFormInput {
-    username: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    password: string;
-    confirmPassword: string;
-    flashGrade: number;
-    projectGrade: number;
-    heightFeet: number;
-    heightInches: number;
-    apeIndex: number;
-    gender: string;
-}
-
 export default function SignUp() {
+    const { switchToLogin } = useContext(LoginContext);
+
     const {
         handleSubmit,
         control,
         formState: {errors}
-    } = useForm<IFormInput>({
+    } = useForm<Profile>({
         resolver: yupResolver(validationSchema),
         defaultValues: {
             username: "",
@@ -143,7 +133,7 @@ export default function SignUp() {
         }
     });
 
-    const onSubmit: SubmitHandler<IFormInput> = data => console.log(data);
+    const onSubmit: SubmitHandler<Profile> = data => console.log(data);
 
     return (
         <ThemeProvider theme={theme}>
@@ -410,15 +400,18 @@ export default function SignUp() {
                             >
                                 Sign Up
                             </Button>
-                            <Grid container justifyContent="flex-end">
-                                <Grid item>
-                                    <Link href="#" variant="body2">
-                                        Already have an account? Sign in
-                                    </Link>
-                                </Grid>
-                            </Grid>
                         </form>
                     </Box>
+                    <Grid item>
+                        <Link
+                            href="#"
+                            variant="body2"
+                            onClick={switchToLogin}
+                        >
+                            Already have an account? Sign in
+                        </Link>
+                    </Grid>
+                    <br/>
                 </Box>
             </Container>
         </ThemeProvider>
