@@ -27,6 +27,7 @@ function App() {
         <LoginContext.Provider value={contextValue}>
             {active === "login" && <Login />}
             {active === "signup" && <SignUp />}
+            {active === "loggedin" && <p>Logged in!</p>}
         </LoginContext.Provider>
     );
 }

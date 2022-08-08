@@ -1,14 +1,3 @@
-/*
- * Copyright (C) 2022 Kevin Zatloukal.  All rights reserved.  Permission is
- * hereby granted to students registered for University of Washington
- * CSE 331 for use solely during Spring Quarter 2022 for purposes of
- * the course.  No other use, copying, distribution, or modification
- * is permitted without prior written consent. Copyrights for
- * third-party components of this work must be honored.  Instructors
- * interested in reusing these course materials should contact the
- * author.
- */
-
 package utils;
 
 import org.slf4j.Logger;
@@ -34,12 +23,6 @@ import java.util.HashMap;
  */
 public class CORSFilter {
 
-    // ===============
-    // You don't need to understand how this works at all, but it's something that's necessary
-    // for our two-server system to work nicely together. If you're curious, read the comments
-    // in this class and do some searching for "CORS", "Cross-Site Scripting", and "XSS" online.
-    // ===============
-
     /**
      * Contains all the headers that need to be added
      */
@@ -52,8 +35,7 @@ public class CORSFilter {
     public CORSFilter() {
         corsHeaders.put("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
         corsHeaders.put("Access-Control-Allow-Origin", "*");
-        corsHeaders.put("Access-Control-Allow-Headers",
-                "Content-Type,Authorization,X-Requested-With,Content-Length,Accept,Origin,");
+        corsHeaders.put("Access-Control-Allow-Headers", "*");
         corsHeaders.put("Access-Control-Allow-Credentials", "true");
     }
 

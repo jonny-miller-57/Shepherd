@@ -1,5 +1,6 @@
 import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
+import axios from 'axios';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
@@ -45,7 +46,7 @@ const validationSchema = yup.object().shape({
 })
 
 export default function Login() {
-    const { switchToSignup } = useContext(LoginContext);
+    const { switchToSignup, switchToHome } = useContext(LoginContext);
 
     const {
         handleSubmit,
@@ -59,9 +60,20 @@ export default function Login() {
         }
     });
 
-    const onSubmit: SubmitHandler<IFormInput> = data => {
-        console.log(data);
+
+
+    const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+        const axios = require("axios");
+        axios
+            .get(`http://localhost:4567/login?user=${data.username}pass=${data.password}`)
+            .then((resp: { data: IFormInput; }) => {
+                console.log(resp.data);
+            })
+            .catch((errors: any) => {
+                console.log(errors);
+            });
     }
+
 
     return (
         <ThemeProvider theme={theme}>
@@ -144,7 +156,6 @@ export default function Login() {
                         </Box>
                         <Grid item>
                             <Link
-                                href="#"
                                 variant="body2"
                                 onClick={switchToSignup}
                             >

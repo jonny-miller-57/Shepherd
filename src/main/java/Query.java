@@ -7,10 +7,7 @@ import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * Runs queries against a back-end database
@@ -32,6 +29,9 @@ public class Query {
     private static final String GET_PROBLEMS = "SELECT destination, area, subarea, boulder, name, grade, stars, description " +
             "FROM Problems WHERE destination = ? ORDER BY name";
     private PreparedStatement getProblemsStatement;
+
+    private static final String LOGIN_ATTEMPT = "SELECT * FROM Users WHERE username = ?";
+    private PreparedStatement loginAttemptStatement;
 
     // For creating new user
     private static final String NEW_USER = "INSERT INTO Users VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -166,7 +166,7 @@ public class Query {
     }
 
     public void transaction_creatUser(String username, String first, String last, String email,
-        String password, String flash, String proj, int feet, int inches, int ape, String gender) throws SQLException {
+        String password, String flash, String proj, String feet, String inches, String ape, String gender) throws SQLException {
         try {
             byte[] salt = getSalt();
             byte[] hash = getHash(password, salt);
@@ -181,15 +181,50 @@ public class Query {
             newUserStatement.setBytes(6, hash);
             newUserStatement.setString(7, flash);
             newUserStatement.setString(8, proj);
-            newUserStatement.setInt(9, feet);
-            newUserStatement.setInt(10, inches);
-            newUserStatement.setInt(11, ape);
+            newUserStatement.setInt(9, Integer.parseInt(feet));
+            newUserStatement.setInt(10, Integer.parseInt(inches));
+            newUserStatement.setInt(11, Integer.parseInt(ape));
             newUserStatement.setString(12, gender);
             newUserStatement.execute();
 
         } finally {
             checkDanglingTransaction();
         }
+    }
+
+    public Profile transaction_loginUser(String username, String password) throws SQLException {
+        Profile p = null;
+        try {
+            loginAttemptStatement.clearParameters();
+            loginAttemptStatement.setString(1, username);
+            ResultSet loginResults = loginAttemptStatement.executeQuery();
+            loginResults.next();
+
+            byte[] salt = loginResults.getBytes("saltedPass");
+            byte[] hash = loginResults.getBytes("hashedPass");
+            byte[] inputHash = getHash(password, salt);
+
+            if (!Arrays.equals(hash, inputHash)) { // if passwords do not match
+                loginResults.close();
+                throw new SQLException("invalid password");
+            } else { // password matches
+                String user = loginResults.getString("username");
+                String first = loginResults.getString("firstName");
+                String last = loginResults.getString("lastName");
+                String gender = loginResults.getString("gender");
+                int flashGrade = loginResults.getInt("flashGrade");
+                int projGrade = loginResults.getInt("projGrade");
+                int heightFeet = loginResults.getInt("heightFeet");
+                int heightInches = loginResults.getInt("heightInches");
+                int ape = loginResults.getInt("apeIndex");
+                p = new Profile(user, first, last, flashGrade, projGrade, heightFeet, heightInches, ape, gender);
+            }
+        } catch (SQLException e) {
+            e.getMessage();
+        } finally {
+            checkDanglingTransaction();
+        }
+        return p;
     }
 
     /**
@@ -199,6 +234,7 @@ public class Query {
         getDestinationsStatement = conn.prepareStatement(GET_DESTINATIONS);
         getNamesStatement = conn.prepareStatement(GET_NAMES);
         getProblemsStatement = conn.prepareStatement(GET_PROBLEMS);
+        loginAttemptStatement = conn.prepareStatement(LOGIN_ATTEMPT);
         newUserStatement = conn.prepareStatement(NEW_USER);
         tranCountStatement = conn.prepareStatement(TRANCOUNT_SQL);
     }
@@ -260,7 +296,7 @@ public class Query {
 //    public static void main(String[] args) throws IOException, SQLException {
 //        /* prepare the database connection stuff */
 //        Query q = new Query();
-//        System.out.println("made the connection");
+//        q.transaction_creatUser("test", "test", "mctester", "test@test.com", "tester", "0", "3", "5", "0", "0", "Male");
 //        q.closeConnection();
 //    }
 }

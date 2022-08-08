@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import Avatar from '@mui/material/Avatar';
+import axios from 'axios';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
@@ -15,7 +16,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { MenuItem} from "@mui/material";
 import {cyan, indigo} from "@mui/material/colors";
 import {Profile} from "./Profile";
-import {useContext} from "react";
+import {useContext, useState} from "react";
 import {LoginContext} from "./LoginContext";
 
 const theme = createTheme({
@@ -114,7 +115,8 @@ export default function SignUp() {
     const {
         handleSubmit,
         control,
-        formState: {errors}
+        setValue,
+        formState: {errors},
     } = useForm<Profile>({
         resolver: yupResolver(validationSchema),
         defaultValues: {
@@ -134,26 +136,22 @@ export default function SignUp() {
     });
 
     const onSubmit: SubmitHandler<Profile> = async (data) => {
-
-        const requestOptions = {
-            method: "POST",
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data),
-        };
-
-        const response = await fetch(
-            "http://localhost:4567/new-user",
-            requestOptions
-        );
-        if (!response.ok) {
-            console.log("Response: " + response);
-            alert("Error! Expected: 200, Was: " + response.status);
-            return;
-        }
-        let result = response.json();
-        console.log("Result: " + result);
+        axios
+            .post(
+                "http://localhost:4567/new-user",
+                {data},
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                }
+            )
+            .then(response => {
+                console.log("response: " + response.data)
+            })
+            .catch(error => {
+                console.log("error: " + error.data)
+            });
     };
 
     return (
@@ -425,7 +423,6 @@ export default function SignUp() {
                     </Box>
                     <Grid item>
                         <Link
-                            href="#"
                             variant="body2"
                             onClick={switchToLogin}
                         >
