@@ -21,20 +21,6 @@ public class SparkServer {
         CORSFilter corsFilter = new CORSFilter();
         corsFilter.apply();
 
-        Spark.get("/login", (request, response) -> {
-            Query q = new Query();
-            Profile p = null;
-            try {
-                String user = request.queryParams("user");
-                String password = request.queryParams("pass");
-                p = q.transaction_loginUser(user, password);
-            } catch (SQLException e) {
-                e.getMessage();
-            }
-            new Gson();
-            return new Gson().toJson(p);
-        });
-
         Spark.get("/names", (request, response) -> {
             Query q;
             List<String> boulders = null;
@@ -91,40 +77,6 @@ public class SparkServer {
         });
 
         Spark.post("/test", (request, response) -> "OK");
-
-        Spark.post("/new-user", (request, response) -> {
-            Query q;
-            String user = request.queryParams("user");
-            String first = request.queryParams("first");
-            String last = request.queryParams("last");
-            String email = request.queryParams("email");
-            String pass = request.queryParams("pass");
-            String flash = request.queryParams("flash");
-            String proj = request.queryParams("proj");
-            String feet = request.queryParams("feet");
-            String inches = request.queryParams("inches");
-            String ape = request.queryParams("ape");
-            String gender = request.queryParams("gender");
-
-            // checks for valid request
-            Map<String, String> errors = validateNewUser(user, first, last, email, pass, flash, proj, feet, inches, ape, gender);
-
-            // halts on invalid requests
-            if(!errors.isEmpty()) { // checking for null parameters
-                Spark.halt(400, "invalid request: " + errors);
-            }
-
-            try {
-                q = new Query();
-                q.transaction_creatUser(user,first, last, email, pass, flash, proj, feet, inches, ape, gender);
-                q.closeConnection();
-
-            } catch (SQLException | IOException | NumberFormatException e) {
-                Spark.halt(400, "something went wrong: " + e.getMessage());
-            }
-            Gson gson = new Gson();
-            return gson.toJson("success");
-        });
     }
 
     // checks for null or empty strings. returns a hash map full of errors else an empty map

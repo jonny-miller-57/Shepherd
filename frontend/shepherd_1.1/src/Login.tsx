@@ -46,7 +46,7 @@ const validationSchema = yup.object().shape({
 })
 
 export default function Login() {
-    const { switchToSignup, switchToHome } = useContext(LoginContext);
+    const {  switchToSignup, switchToHome } = useContext(LoginContext);
 
     const {
         handleSubmit,
@@ -64,13 +64,15 @@ export default function Login() {
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         const axios = require("axios");
+        console.log("data prior to get request: " + JSON.stringify(data));
         axios
-            .get(`http://localhost:4567/login?user=${data.username}pass=${data.password}`)
+            .get(`http://localhost:4567/login?user=${data.username}&pass=${data.password}`)
             .then((resp: { data: IFormInput; }) => {
-                console.log(resp.data);
+                console.log("data: " + JSON.stringify(resp.data));
+                switchToHome;
             })
             .catch((errors: any) => {
-                console.log(errors);
+                console.log("errors: " + errors);
             });
     }
 

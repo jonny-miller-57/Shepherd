@@ -4,9 +4,10 @@ import './App.css';
 import {Profile} from "./Profile";
 import {LoginContext} from "./LoginContext";
 import SignUp from "./SignUp";
+import Home from "./Home";
 
 function App() {
-    const [active, setActive] = useState<string>("login");
+    const [active, setActive] = useState<string>("loggedin");
     const [user, setUser] = useState<Profile | null>(null);
 
     const switchToSignup = () => {
@@ -25,9 +26,9 @@ function App() {
 
     return (
         <LoginContext.Provider value={contextValue}>
-            {active === "login" && <Login />}
-            {active === "signup" && <SignUp />}
-            {active === "loggedin" && <p>Logged in!</p>}
+            {active === "login" && <Login/>}
+            {active === "signup" && <SignUp/>}
+            {active === "loggedin" && <Home/>}
         </LoginContext.Provider>
     );
 }

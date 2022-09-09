@@ -5,14 +5,14 @@ public class Profile {
     private final String username;
     private final String first;
     private final String last;
-    private final int flashGrade;
-    private final int projGrade;
+    private final String flashGrade;
+    private final String projGrade;
     private final int heightFeet;
     private final int heightInches;
     private final int ape;
     private final String gender;
 
-    public Profile(String username, String first, String last, int flashGrade, int projGrade, int heightFeet, int heightInches, int ape, String gender) {
+    public Profile(String username, String first, String last, String flashGrade, String projGrade, int heightFeet, int heightInches, int ape, String gender) {
         this.username = username;
         this.first = first;
         this.last = last;
@@ -25,6 +25,10 @@ public class Profile {
     }
 
     public Profile() {
-        this("", "", "",0,1,5,0,0,"Other");
+        this("", "", "","V0","V1",5,0,0,"Other");
+    }
+
+    public String getUsername() {
+        return username;
     }
 }

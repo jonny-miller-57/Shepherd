@@ -14,6 +14,12 @@ import java.util.*;
  */
 public class Query {
 
+    // login status
+    private boolean LOGGED_IN = false;
+
+    // username associated with session
+    private Profile LOGGED_IN_AS;
+
     private final Connection conn;
 
     // Password hashing parameter constants
@@ -22,6 +28,9 @@ public class Query {
 
     private static final String GET_DESTINATIONS = "SELECT DISTINCT destination FROM Problems";
     private PreparedStatement getDestinationsStatement;
+
+    private static final String GET_USER_DATA = "SELECT username, firstName, lastName, flashGrade, projectGrade, heightFeet, heightInches, apeIndex, gender FROM Users WHERE username = ?";
+    private PreparedStatement getUserDataStatement;
 
     private static final String GET_NAMES = "SELECT name FROM Problems";
     private PreparedStatement getNamesStatement;
@@ -165,8 +174,34 @@ public class Query {
         return problems;
     }
 
-    public void transaction_creatUser(String username, String first, String last, String email,
-        String password, String flash, String proj, String feet, String inches, String ape, String gender) throws SQLException {
+    /**
+     * Gathers all relevant user information
+     * @param username The username to fetch associated user data from
+     * @return A profile of the username
+     */
+    public Profile getProfile(String username) throws SQLException {
+        Profile profile = new Profile();
+        getUserDataStatement.clearParameters();
+        getUserDataStatement.setString(1, username);
+        ResultSet profileResults = getUserDataStatement.executeQuery();
+        while (profileResults.next()) {
+            String user = profileResults.getString("username");
+            String first = profileResults.getString("firstName");
+            String last = profileResults.getString("lastName");
+            String flash = profileResults.getString("flashGrade");
+            String proj = profileResults.getString("projectGrade");
+            int feet = profileResults.getInt("heightFeet");
+            int inches = profileResults.getInt("heightInches");
+            int ape = profileResults.getInt("apeIndex");
+            String gender = profileResults.getString("gender");
+            profile = new Profile(user, first, last, flash, proj, feet, inches, ape, gender);
+        }
+        return profile;
+    }
+
+
+    public String transaction_creatUser(String username, String first, String last, String email,
+        String password, String flash, String proj, int feet, int inches, int ape, String gender) throws SQLException {
         try {
             byte[] salt = getSalt();
             byte[] hash = getHash(password, salt);
@@ -181,19 +216,24 @@ public class Query {
             newUserStatement.setBytes(6, hash);
             newUserStatement.setString(7, flash);
             newUserStatement.setString(8, proj);
-            newUserStatement.setInt(9, Integer.parseInt(feet));
-            newUserStatement.setInt(10, Integer.parseInt(inches));
-            newUserStatement.setInt(11, Integer.parseInt(ape));
+            newUserStatement.setInt(9, feet);
+            newUserStatement.setInt(10, inches);
+            newUserStatement.setInt(11, ape);
             newUserStatement.setString(12, gender);
             newUserStatement.execute();
-
+            return "Thanks " + first + " and Welcome! You will be known around here as " + username + ".\n";
+        } catch (SQLException e) {
+            return "Failed to create user \n" + e.getMessage();
         } finally {
             checkDanglingTransaction();
         }
     }
 
-    public Profile transaction_loginUser(String username, String password) throws SQLException {
-        Profile p = null;
+    public String transaction_loginUser(String username, String password) throws SQLException {
+        if (LOGGED_IN) {
+            return "You're already logged in as " + LOGGED_IN_AS.getUsername() + "\n";
+        }
+        Profile p;
         try {
             loginAttemptStatement.clearParameters();
             loginAttemptStatement.setString(1, username);
@@ -206,25 +246,36 @@ public class Query {
 
             if (!Arrays.equals(hash, inputHash)) { // if passwords do not match
                 loginResults.close();
-                throw new SQLException("invalid password");
+                return "invalid password";
             } else { // password matches
                 String user = loginResults.getString("username");
                 String first = loginResults.getString("firstName");
                 String last = loginResults.getString("lastName");
                 String gender = loginResults.getString("gender");
-                int flashGrade = loginResults.getInt("flashGrade");
-                int projGrade = loginResults.getInt("projGrade");
+                String flashGrade = loginResults.getString("flashGrade");
+                String projGrade = loginResults.getString("projectGrade");
                 int heightFeet = loginResults.getInt("heightFeet");
                 int heightInches = loginResults.getInt("heightInches");
                 int ape = loginResults.getInt("apeIndex");
                 p = new Profile(user, first, last, flashGrade, projGrade, heightFeet, heightInches, ape, gender);
+                LOGGED_IN = true;
+                LOGGED_IN_AS = p;
+                return "success";
             }
         } catch (SQLException e) {
-            e.getMessage();
+            return "unknown username: " + username;
         } finally {
             checkDanglingTransaction();
         }
-        return p;
+    }
+
+    public Profile getLOGGED_IN_AS() {
+        return LOGGED_IN_AS;
+    }
+
+    public void logout() {
+        this.LOGGED_IN = false;
+        this.LOGGED_IN_AS = null;
     }
 
     /**
@@ -234,6 +285,7 @@ public class Query {
         getDestinationsStatement = conn.prepareStatement(GET_DESTINATIONS);
         getNamesStatement = conn.prepareStatement(GET_NAMES);
         getProblemsStatement = conn.prepareStatement(GET_PROBLEMS);
+        getUserDataStatement = conn.prepareStatement(GET_USER_DATA);
         loginAttemptStatement = conn.prepareStatement(LOGIN_ATTEMPT);
         newUserStatement = conn.prepareStatement(NEW_USER);
         tranCountStatement = conn.prepareStatement(TRANCOUNT_SQL);
