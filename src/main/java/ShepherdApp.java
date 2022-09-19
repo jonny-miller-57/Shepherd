@@ -160,6 +160,22 @@ public class ShepherdApp {
                 for (Profile member : party) {
                     System.out.println(member.getUsername());
                 }
+                String size = party.size() == 1 ? "" : "" + party.size();
+                System.out.println("Would you " + size + " like to have a project day or a volume day?");
+                System.out.println("Enter 'project' for project day or 'volume' for a high volume day.");
+                String dayType = "";
+                while (true) {
+                    dayType = reader.readLine();
+                    try {
+                        if (!dayType.equals("project") && !dayType.equals("volume")) {
+                            throw new IOException("Please enter 'volume' or 'project'");
+                        } else {
+                            break;
+                        }
+                    } catch (IOException e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
                 break;
             } else {
                 System.out.println("...sorry we do not have data for that destination yet. Make sure you typed in the correct spelling (case sensitive)");
