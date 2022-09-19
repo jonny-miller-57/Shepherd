@@ -156,18 +156,20 @@ public class ShepherdApp {
             }
             destination = reader.readLine();
             if (destinations.contains(destination)) { // if a valid destination
+                ArrayList<Profile> party = getParty(q, reader);
+                for (Profile member : party) {
+                    System.out.println(member.getUsername());
+                }
                 break;
             } else {
                 System.out.println("...sorry we do not have data for that destination yet. Make sure you typed in the correct spelling (case sensitive)");
             }
-
-
         }
 
 
     }
 
-    private ArrayList<Profile> getParty(Query q, BufferedReader reader) throws IOException {
+    private static ArrayList<Profile> getParty(Query q, BufferedReader reader) throws IOException {
         int partySize;
         while (true) {
             System.out.println("*** Enter number of climbers in your party (enter '1' for a solo trip): ");
@@ -183,7 +185,7 @@ public class ShepherdApp {
         return party;
     }
 
-    private ArrayList<Profile> getPartyData(Query q, BufferedReader reader) throws IOException {
+    private static ArrayList<Profile> getPartyData(Query q, BufferedReader reader) throws IOException {
         ArrayList<Profile> party = new ArrayList<>();
         while (true) {
             System.out.println("*** Enter your username and the usernames of your party seperated by a single space.");
