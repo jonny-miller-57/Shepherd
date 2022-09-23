@@ -5,6 +5,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ShepherdApp {
+
+    private static String LOGGED_IN_AS;
     /**
      * Establishes an application-to-database connection and runs the Flights
      * application REPL
@@ -129,6 +131,7 @@ public class ShepherdApp {
 
                 String attempt = q.transaction_loginUser(username, password);
                 if (attempt.equals("success")) {
+                    LOGGED_IN_AS = username;
                     System.out.println("\nWelcome " + username + ", it's good to have you back.\n");
                     break;
                 }
@@ -157,9 +160,9 @@ public class ShepherdApp {
             destination = reader.readLine();
             if (destinations.contains(destination)) { // if a valid destination
                 ArrayList<Profile> party = getParty(q, reader);
-                for (Profile member : party) {
-                    System.out.println(member.getUsername());
-                }
+//                for (Profile member : party) {
+//                    System.out.println(member.getUsername());
+//                }
                 String size = party.size() == 1 ? "" : "" + party.size();
                 System.out.println("Would you " + size + " like to have a project day or a volume day?");
                 System.out.println("Enter 'project' for project day or 'volume' for a high volume day.");
@@ -197,23 +200,33 @@ public class ShepherdApp {
                 System.out.println("you must provide an integer for the size of your party");
             }
         }
-        ArrayList<Profile> party = getPartyData(q,reader);
-        return party;
+        return getPartyData(partySize, q,reader);
     }
 
-    private static ArrayList<Profile> getPartyData(Query q, BufferedReader reader) throws IOException {
-        ArrayList<Profile> party = new ArrayList<>();
-        while (true) {
-            System.out.println("*** Enter your username and the usernames of your party seperated by a single space.");
-            String[] input = tokenize(reader.readLine());
-            try {
-                for (String user : input) {
-                    Profile profile = q.getProfile(user);
-                    party.add(profile);
+    private static ArrayList<Profile> getPartyData(int partySize, Query q, BufferedReader reader) throws IOException {
+        ArrayList<Profile> party = new ArrayList<>(partySize);
+        try {
+            party.add(q.getProfile(LOGGED_IN_AS));
+        } catch (SQLException e) {
+            System.out.println("There was a problem connecting the database, please restart the app and try again...");
+        }
+
+        if (partySize > 1) {
+            while (true) {
+                System.out.println("*** " + LOGGED_IN_AS + ", enter the usernames of your other party members seperated by a single space.");
+                String[] input = tokenize(reader.readLine());
+                try {
+                    for (String user : input) {
+                        Profile profile = q.getProfile(user);
+                        party.add(profile);
+                    }
+                    if (party.size() != partySize) {
+                        throw new SQLException();
+                    }
+                    break;
+                } catch (SQLException e) {
+                    System.out.println("you must provide the correct number of valid usernames...");
                 }
-                break;
-            } catch (SQLException e) {
-                System.out.println("you must provide valid usernames...");
             }
         }
         return party;
