@@ -40,3 +40,22 @@ CREATE TABLE Users(
     apeIndex INT,
     gender VARCHAR(255)
 )
+
+CREATE TABLE Parking (
+    name VARCHAR(255) PRIMARY KEY,
+    lat DOUBLE PRECISION,
+    long DOUBLE PRECISION,
+)
+
+CREATE TABLE Areas (
+    destination VARCHAR(255),
+    area VARCHAR(255),
+    subarea VARCHAR(255),
+    numProblems INT,
+    approachTerrain VARCHAR(255),
+    approachTimeMin INT,
+    sun VARCHAR(255),
+    parkingLot VARCHAR(255),
+    rainCovered VARCHAR(1),
+    driesQuick VARCHAR(1)
+)
